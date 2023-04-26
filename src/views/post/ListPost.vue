@@ -218,7 +218,7 @@ const openDialog = (id: string) => {
                                             </td>
                                             <td>
                                                 <div style="display: flex">
-                                                    <router-link :to="'/update-post?slug=' + item.slug"><v-btn>Sửa</v-btn></router-link>
+                                                    <router-link :to="'/update-post?slug=' + item._id"><v-btn>Sửa</v-btn></router-link>
                                                     <v-btn
                                                         style="margin-left: 5px; color: red"
                                                         :loading="loadingPost[item._id]"

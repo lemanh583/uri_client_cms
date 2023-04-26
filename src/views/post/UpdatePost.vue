@@ -34,7 +34,6 @@ const fetchCategory = (): void => {
         .get('/api/category/list')
         .then((response) => {
             listCategory.value = response.data.list;
-            // select.value = listCategory.value.length ? listCategory.value[0] : '';
         })
         .catch((error) => {
             console.error(error);
@@ -51,8 +50,7 @@ const loadData = computed(() => {
 
 watch(loadData, (newVal) => {
     if (newVal == '-0') return;
-    let index = listCategory.value.findIndex((i: any) => i._id == postData.value.category._id);
-    select.value = index >= 0 ? listCategory.value[index] : listCategory.value[0];
+    select.value = listCategory.value.filter((i: any) => postData.value.category.find( (c: any) => c._id == i._id));
 });
 
 watch(buttonCreatePost, () => {
@@ -86,9 +84,14 @@ const updatePost = async (): Promise<void> => {
     }
     setLoadingCreatePost(true);
     let data: any = new FormData();
+
+    for (var i = 0; i < select.value.length; i++ ){
+        let cate = select.value[i];
+        data.append('category', cate);
+    }
+
     data.append('title', post.title);
     data.append('descriptions', post.descriptions);
-    data.append('category', select.value._id);
     data.append('content', post.content);
     if (post.files.length) {
         data.append('file', post.files[0]);
@@ -177,7 +180,7 @@ const onReady = (eventData: any) => {
                         label="Chọn thể loại"
                         @update:modelValue="test"
                         persistent-hint
-                        return-object
+                        multiple
                         single-line
                     ></v-select>
 
@@ -191,7 +194,7 @@ const onReady = (eventData: any) => {
 
                         <v-col cols="12" sm="6">
                             <v-label class="font-weight-bold mb-1">Xem trước</v-label>
-                            <div class="content-preview" v-html="post.content"></div>
+                            <div class="content-preview" style="max-height: 500px; overflow-y: auto;" v-html="post.content"></div>
                         </v-col>
                     </v-row>
                 </div>
@@ -209,11 +212,13 @@ const onReady = (eventData: any) => {
 
 <style>
 .content-preview img {
-    width: 80%;
+    width: 70%;
     display: block;
     margin: auto;
 }
 .ck-editor__editable {
     min-height: 500px;
+    max-height: 500px;
 }
+
 </style>

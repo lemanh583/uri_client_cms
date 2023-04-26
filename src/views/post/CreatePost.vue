@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import UiParentCard from '@/components/shared/UiParentCard.vue';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-// import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
-// import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
-// import ClassicEditor from "@/plugins/ckeditorCustom"
 import { ref, reactive, watch } from 'vue';
 import { useCookies } from 'vue3-cookies';
 import axios from '@/plugins/axios';
@@ -14,29 +11,6 @@ import { UploadAdapter } from '@/plugins/upload';
 // import Image from '@ckeditor/ckeditor5-image/src/image';
 // import ImageResizeEditing from '@ckeditor/ckeditor5-image/src/imageresize/imageresizeediting';
 // import ImageResizeHandles from '@ckeditor/ckeditor5-image/src/imageresize/imageresizehandles';
-
-
-// import { Essentials } from '@ckeditor/ckeditor5-essentials';
-// // import { UploadAdapter } from '@ckeditor/ckeditor5-adapter-ckfinder';
-// import { Autoformat } from '@ckeditor/ckeditor5-autoformat';
-// import { Bold, Italic } from '@ckeditor/ckeditor5-basic-styles';
-// import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
-// import { CKBox } from '@ckeditor/ckeditor5-ckbox';
-// import { CKFinder } from '@ckeditor/ckeditor5-ckfinder';
-// import { EasyImage } from '@ckeditor/ckeditor5-easy-image';
-// import { Heading } from '@ckeditor/ckeditor5-heading';
-// import { Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload, PictureEditing } from '@ckeditor/ckeditor5-image';
-// import { Indent } from '@ckeditor/ckeditor5-indent';
-// import { Link } from '@ckeditor/ckeditor5-link';
-// import { List } from '@ckeditor/ckeditor5-list';
-// import { MediaEmbed } from '@ckeditor/ckeditor5-media-embed';
-// import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
-// import { PasteFromOffice } from '@ckeditor/ckeditor5-paste-from-office';
-// import { Table, TableToolbar } from '@ckeditor/ckeditor5-table';
-// import { TextTransformation } from '@ckeditor/ckeditor5-typing';
-// import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
-
-
 
 const { cookies } = useCookies();
 
@@ -56,7 +30,7 @@ const editorConfig = ref({
     //     uploadUrl: import.meta.env.VITE_API_URL + '/api/upload'
     // }
 });
-const select = ref<any>({});
+const select = ref<any>([]);
 const listCategory = ref<any>([]);
 const post = reactive({
     title: '',
@@ -71,7 +45,6 @@ const fetchCategory = (): void => {
         .get('/api/category/list')
         .then((response) => {
             listCategory.value = response.data.list;
-            select.value = listCategory.value.length ? listCategory.value[0] : '';
         })
         .catch((error) => {
             console.error(error);
@@ -89,6 +62,9 @@ watch(buttonCreatePost, () => {
 const validateForm = () => {
     if (!post.title || !post.title.trim()) {
         return { success: false, message: 'Tiêu đề bài viết không được bỏ trống' };
+    }
+    if(!select.value.length) {
+        return { success: false, message: 'Chưa chọn thể loại' };
     }
     if (!post.descriptions || !post.descriptions.trim()) {
         return { success: false, message: 'Mô tả bài viết không được bỏ trống' };
@@ -113,9 +89,13 @@ const createPost = async (): Promise<void> => {
     }
     setLoadingCreatePost(true);
     let data: any = new FormData();
+
+    for (var i = 0; i < select.value.length; i++ ){
+        let cate = select.value[i];
+        data.append('category', cate);
+    }
     data.append('title', post.title);
     data.append('descriptions', post.descriptions);
-    data.append('category', select.value._id);
     data.append('content', post.content);
     data.append('file', post.files[0]);
 
@@ -187,7 +167,7 @@ const onReady = (eventData: any) => {
                         label="Chọn thể loại"
                         @update:modelValue="test"
                         persistent-hint
-                        return-object
+                        multiple
                         single-line
                     ></v-select>
 
