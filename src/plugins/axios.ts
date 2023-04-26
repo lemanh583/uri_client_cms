@@ -5,7 +5,7 @@ const { cookies } = useCookies();
 
 
 const axiosApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3100",
+  baseURL: import.meta.env.VITE_API_URL || "http://api.uriedu.vn",
 });
 
 enum MessageError {
