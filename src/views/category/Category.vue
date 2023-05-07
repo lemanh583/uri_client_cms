@@ -71,6 +71,13 @@ const updateCategory = (id: string, item: any) => {
         });
 };
 
+const arr = [
+    'blog',
+    'su-kien',
+    'tin-tuc',
+    'tuyen-dung'
+]
+
 fetchCategory();
 </script>
 
@@ -136,11 +143,11 @@ fetchCategory();
                                             <h6 class="text-body-1 text-muted">{{ new Date(item.created_time).toLocaleString() }}</h6>
                                         </td>
                                         <td>
-                                            <v-btn v-if="!activeInput[item._id]" class="bg-primary" @click="openInput(item._id)"
+                                            <v-btn v-if="!activeInput[item._id] && !arr.includes(item.slug)" class="bg-primary" @click="openInput(item._id)"
                                                 >Chỉnh sửa</v-btn
                                             >
                                             <v-btn
-                                                v-else
+                                                v-if="activeInput[item._id] && !arr.includes(item.slug)"
                                                 class="bg-primary"
                                                 @click="updateCategory(item._id, item)"
                                                 :loading="loadingInput[item._id]"

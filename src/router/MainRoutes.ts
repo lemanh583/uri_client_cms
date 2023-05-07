@@ -71,6 +71,11 @@ const MainRoutes = {
             path: '/topics/:id',
             component: () => import('@/views/topic/DetailTopic.vue')
         },
+        {
+            name: 'List Slide',
+            path: '/slides',
+            component: () => import('@/views/slide/ListSlide.vue')
+        },
     ]
 };
 

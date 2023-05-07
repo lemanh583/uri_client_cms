@@ -40,6 +40,11 @@ const post = reactive({
     files: <any>[]
 });
 
+const displayHiring = ref(false)
+const hiringName = ref("")
+const hiringAddress = ref("")
+const hiringDate = ref("")
+
 const fetchCategory = (): void => {
     axios
         .get('/api/category/list')
@@ -63,11 +68,17 @@ const validateForm = () => {
     if (!post.title || !post.title.trim()) {
         return { success: false, message: 'Tiêu đề bài viết không được bỏ trống' };
     }
+    if (!post.descriptions || !post.descriptions.trim()) {
+        return { success: false, message: 'Mô tả bài viết không được bỏ trống' };
+    }
     if(!select.value.length) {
         return { success: false, message: 'Chưa chọn thể loại' };
     }
-    if (!post.descriptions || !post.descriptions.trim()) {
-        return { success: false, message: 'Mô tả bài viết không được bỏ trống' };
+    if(displayHiring.value && (!hiringName.value || !hiringName.value.trim())) {
+        return { success: false, message: 'Vị trí tuyển dụng không được bỏ trống' };
+    }
+    if(displayHiring.value && (!hiringAddress.value || !hiringAddress.value.trim())) {
+        return { success: false, message: 'Địa chỉ tuyển dụng không được bỏ trống' };
     }
     if (!post.files.length) {
         return { success: false, message: 'Ảnh bìa bài viết không được bỏ trống' };
@@ -99,6 +110,17 @@ const createPost = async (): Promise<void> => {
     data.append('content', post.content);
     data.append('file', post.files[0]);
 
+    if(displayHiring.value) {
+        let hiring: any = {
+            name: hiringName.value,
+            address: hiringAddress.value,
+        }
+        if(hiringDate.value) {
+            hiring.date = new Date(hiringDate.value + ', 23:59:59').getTime();
+        }
+        data.append('hiring', JSON.stringify(hiring))
+    }
+
     axios
         .post('/api/post/create', data)
         .then((response) => {
@@ -120,6 +142,12 @@ const onReady = (eventData: any) => {
         return new UploadAdapter(loader);
     };
 };
+
+const checkList = (data: any) => {
+    let category = listCategory.value.find((i: any) => i.slug == 'tuyen-dung')
+    displayHiring.value = data.includes(category?._id) ? true : false;
+}
+
 </script>
 
 <template>
@@ -165,11 +193,44 @@ const onReady = (eventData: any) => {
                         item-title="name"
                         item-value="_id"
                         label="Chọn thể loại"
-                        @update:modelValue="test"
+                        @update:modelValue="checkList"
                         persistent-hint
                         multiple
                         single-line
                     ></v-select>
+
+                    <div v-if="displayHiring">
+                        <v-label class="font-weight-bold mb-1">Vị trí tuyển dụng <span style="color: red">*</span> </v-label>
+                        <v-text-field
+                            v-model="hiringName"
+                            class="input-item"
+                            type="text"
+                            variant="outlined"
+                            hide-details
+                            color="primary"
+                        ></v-text-field>
+
+                        <v-label class="font-weight-bold mb-1">Nơi làm việc <span style="color: red">*</span> </v-label>
+                        <v-text-field
+                            v-model="hiringAddress"
+                            class="input-item"
+                            type="text"
+                            variant="outlined"
+                            hide-details
+                            color="primary"
+                        ></v-text-field>
+
+                        <v-label class="font-weight-bold mb-1">Ngày hết hạn <span style="color: red">*</span> </v-label>
+                        <v-text-field
+                            v-model="hiringDate"
+                            class="input-item"
+                            type="date"
+                            variant="outlined"
+                            hide-details
+                            color="primary"
+                        ></v-text-field>
+
+                    </div>
 
                     
 

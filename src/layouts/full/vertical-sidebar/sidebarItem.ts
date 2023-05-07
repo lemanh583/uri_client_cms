@@ -1,7 +1,9 @@
 import {
     ApertureIcon,
     CopyIcon,
-    LayoutDashboardIcon, LoginIcon, MoodHappyIcon, TypographyIcon, UserPlusIcon
+    LayoutDashboardIcon, LoginIcon, MoodHappyIcon, TypographyIcon,
+    UserPlusIcon, BoxMultiple0Icon, BoxMultiple1Icon, BoxMultiple2Icon, BoxMultiple3Icon,
+    BoxMultiple4Icon, BoxMultiple5Icon
 } from 'vue-tabler-icons';
 
 export interface menu {
@@ -23,34 +25,39 @@ const sidebarItem: menu[] = [
     { header: 'Home' },
     {
         title: 'Tạo bài viết',
-        icon: LayoutDashboardIcon,
+        icon: BoxMultiple0Icon,
         to: '/create-post'
     },
     {
         title: 'Danh sách bài viết',
-        icon: LayoutDashboardIcon,
+        icon: BoxMultiple1Icon,
         to: '/list-post'
     },
     {
         title: 'Thể loại',
-        icon: MoodHappyIcon,
+        icon: BoxMultiple2Icon,
         to: '/category'
     },
     {
         title: 'Danh sách liên hệ',
-        icon: MoodHappyIcon,
+        icon: BoxMultiple3Icon,
         to: '/contacts'
     },
     {
         title: 'DS chủ đề (Hình ảnh)',
-        icon: MoodHappyIcon,
+        icon: BoxMultiple4Icon,
         to: '/topics'
     },
     {
-        title: 'Dashboard',
-        icon: LayoutDashboardIcon,
-        to: '/'
+        title: 'Danh sách slide',
+        icon: BoxMultiple5Icon,
+        to: '/slides'
     },
+    // {
+    //     title: 'Dashboard',
+    //     icon: LayoutDashboardIcon,
+    //     to: '/'
+    // },
     // { header: 'utilities' },
     // {
     //     title: 'Typography',

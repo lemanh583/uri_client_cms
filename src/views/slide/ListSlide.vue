@@ -6,25 +6,26 @@ import { productPerformance } from '@/data/dashboard/dashboardData';
 import axios from '@/plugins/axios';
 import { toast } from 'vue3-toastify';
 import LoadingPopup from '@/components/LoadingPopup.vue';
+import CreateTopic from '@/components/CreateTopic.vue';
+// import { revertButtonCreateTopic, buttonCreateTopic } from '@/store/index';
+// import AddImageTopic from '@/components/AddImageTopic.vue';
+import AddSlideVue from '@/components/AddSlide.vue';
+import UpdateSlideVue from '@/components/UpdateSlide.vue';
 
 const { cookies } = useCookies();
-const category = ref('');
+
 const list = ref<any>([]);
-const listCategory = ref([
-    {
-        name: 'Tất cả',
-        _id: '1'
-    }
-]);
-const select = ref({
-    name: 'Tất cả',
-    _id: '1'
-});
+
 const page = ref(1);
 const limit = ref(10);
 const totalPage = ref(1);
 const dialog = ref(false);
+const dialogImage = ref(false);
 const loadingFetchPost = ref(false);
+
+const openDialogAdd = ref(false);
+const openDialogUpdate = ref(false);
+const slide = ref({})
 
 const size = ref({ state: '10 / page', abbr: 10 });
 const listSize = ref([
@@ -34,29 +35,6 @@ const listSize = ref([
     { state: '40 / page', abbr: 40 },
     { state: '50 / page', abbr: 50 }
 ]);
-
-const sort = ref({ state: 'Ngày tạo mới nhất', abbr: '1' });
-const listSort = ref([
-    { state: 'Ngày tạo mới nhất', abbr: '1' },
-    { state: 'Ngày tạo cũ nhất', abbr: '2' },
-    { state: 'Lượt xem nhiều nhất', abbr: '3' },
-    { state: 'Lượt xem ít nhất', abbr: '4' }
-]);
-
-const sortDb: any = {
-    '1': {
-        created_time: -1
-    },
-    '2': {
-        created_time: 1
-    },
-    '3': {
-        view: -1
-    },
-    '4': {
-        view: 1
-    }
-};
 
 const search = ref('');
 const loadingPost = ref<any>({});
@@ -69,7 +47,7 @@ const fetchPost = (): void => {
         search: search.value
     };
     axios
-        .post('/api/contact/list', params)
+        .get('/api/slide/list')
         .then((response) => {
             list.value = response.data.list;
             list.value.map((i: any) => (loadingPost.value[i._id] = false));
@@ -104,13 +82,13 @@ const deletePost = (): void => {
     loadingPost.value[postId.value] = true;
     dialog.value = false;
     axios
-        .delete('/api/contact/delete/' + postId.value)
+        .delete('/api/slide/delete/' + postId.value)
         .then((response) => {
-            toast('Xoá liên hệ thành công');
+            toast('Xoá slide thành công');
             fetchPost();
         })
         .catch((error) => {
-            toast.error('Xoá liên hệ thất bại');
+            toast.error('Xoá slide thất bại');
             console.error(error);
         })
         .finally(() => (loadingPost.value[postId.value] = false));
@@ -121,29 +99,42 @@ const openDialog = (id: string) => {
     postId.value = id;
     dialog.value = true;
 };
+
+const topicId = ref('');
+const openDialogImage = (data: any) => {
+   slide.value = data;
+   openDialogUpdate.value = !openDialogUpdate.value;
+};
+
+const closeDialog = (type?: string) => {
+    openDialogAdd.value = !openDialogAdd.value;
+    if (type == 're-load') {
+        fetchPost();
+    }
+};
+
+const closeDialogUpdate = (type?: string) => {
+    openDialogUpdate.value = !openDialogUpdate.value;
+    if (type == 're-load') {
+        fetchPost();
+    }
+};
+
+const closeDialogImage = (type?: string) => {
+    dialogImage.value = false;
+    if (type == 're-load') {
+        // fetchPost();
+    }
+};
 </script>
 
 <template>
     <v-row>
         <v-col cols="12" md="12">
-            <UiParentCard title="Liên hệ">
+            <UiParentCard title="Chủ đề hình ảnh">
                 <div class="pa-7 pt-0">
-                    <v-row>
-                        <v-col cols="12" sm="9">
-                            <v-text-field
-                                v-model="search"
-                                class="input-item"
-                                type="text"
-                                variant="outlined"
-                                hide-details
-                                color="primary"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="3">
-                            <v-btn class="bg-primary" style="height: 50px; width: 100%" @click="findPost">Tìm kiếm</v-btn>
-                        </v-col>
-                    </v-row>
-
+                    
+                    <v-btn class="bg-primary" style="height: 50px;" @click="closeDialog">Thêm slide</v-btn>
                     <v-card elevation="10" class="" style="margin-top: 20px">
                         <v-card-item class="pa-6">
                             <!-- <v-card-title class="text-h5 pt-sm-2 pb-7">Danh sách thể loại</v-card-title> -->
@@ -151,12 +142,10 @@ const openDialog = (id: string) => {
                                 <v-table class="month-table table-contact">
                                     <thead>
                                         <tr>
-                                            <th class="text-subtitle-1 font-weight-bold">Stt</th>
-                                            <th class="text-subtitle-1 font-weight-bold">Họ và tên</th>
-                                            <th class="text-subtitle-1 font-weight-bold">Email</th>
-                                            <th class="text-subtitle-1 font-weight-bold">Số điện thoại</th>
-                                            <th class="text-subtitle-1 font-weight-bold">Tình trạng</th>
-                                            <th class="text-subtitle-1 font-weight-bold"></th>
+                                            <th class="text-subtitle-1 font-weight-bold" style="width: 10%">Stt</th>
+                                            <th class="text-subtitle-1 font-weight-bold" style="width: 30%">Title</th>
+                                            <th class="text-subtitle-1 font-weight-bold" style="width: 30%">Mô tả</th>
+                                            <th class="text-subtitle-1 font-weight-bold" style="width: 20%">Hình ảnh</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -165,21 +154,19 @@ const openDialog = (id: string) => {
                                                 <p class="text-15 font-weight-medium">{{ (page - 1) * limit + index + 1 }}</p>
                                             </td>
                                             <td>
-                                                <p class="text-body-1 text-muted">{{ item.name }}</p>
+                                                <p class="text-body-1 text-muted">{{ item.title }}</p>
                                             </td>
                                             <td>
-                                                <p class="text-body-1 text-muted">{{ item.email }}</p>
+                                                <p class="text-body-1 text-muted">{{ item.descriptions }}</p>
                                             </td>
                                             <td>
-                                                <p class="text-body-1 text-muted">{{ item.phone }}</p>
-                                            </td>
-                                            <td>
-                                                <p v-if="item.active" class="text-body-1 text-muted" style="color: green !important;">Đã liên hệ</p>
-                                                <p v-else class="text-body-1 text-muted" style="color: red !important;"> Chưa liên hệ </p>
+                                                <img :src="item.url_image" alt="" style="max-width: 150px;height: auto;">
                                             </td>
                                             <td>
                                                 <div style="display: flex">
-                                                    <router-link :to="'/contacts/' + item._id"><v-btn>Xem</v-btn></router-link>
+                                                    <v-btn style="margin-left: 5px; color: green" @click="openDialogImage(item)"
+                                                        >Chỉnh sửa</v-btn
+                                                    >
                                                     <v-btn
                                                         style="margin-left: 5px; color: red"
                                                         :loading="loadingPost[item._id]"
@@ -192,30 +179,7 @@ const openDialog = (id: string) => {
                                     </tbody>
                                 </v-table>
                             </div>
-                            <v-row>
-                                <v-col cols="6">
-                                    <v-select
-                                        style="width: 50%"
-                                        v-model="size"
-                                        :items="listSize"
-                                        item-title="state"
-                                        item-value="abbr"
-                                        label="Select"
-                                        persistent-hint
-                                        return-object
-                                        single-line
-                                        variant="underlined"
-                                        @update:model-value="changeSize"
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="6">
-                                    <v-pagination
-                                        style="float: right"
-                                        :length="totalPage"
-                                        @update:modelValue="changePagination"
-                                    ></v-pagination>
-                                </v-col>
-                            </v-row>
+                          
                         </v-card-item>
                     </v-card>
                 </div>
@@ -225,7 +189,7 @@ const openDialog = (id: string) => {
 
     <v-dialog v-model="dialog" persistent width="auto">
         <v-card>
-            <v-card-title class="text-h5">Xoá liên hệ?</v-card-title>
+            <v-card-title class="text-h5">Xoá slide?</v-card-title>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="green-darken-1" variant="text" @click="dialog = false"> Huỷ </v-btn>
@@ -235,6 +199,8 @@ const openDialog = (id: string) => {
     </v-dialog>
 
     <LoadingPopup :dialog="loadingFetchPost" />
+    <AddSlideVue :dialog="openDialogAdd" @success="closeDialog" @close="closeDialog" />
+    <UpdateSlideVue :dialog="openDialogUpdate" :slide="slide" @success="closeDialogUpdate" @close="closeDialogUpdate" />
 </template>
 
 <style scoped>

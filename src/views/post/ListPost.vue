@@ -146,7 +146,7 @@ const openDialog = (id: string) => {
 <template>
     <v-row>
         <v-col cols="12" md="12">
-            <UiParentCard title="Thể loại">
+            <UiParentCard title="Danh sách bài viết">
                 <div class="pa-7 pt-0">
                     <v-row>
                         <v-col cols="12" sm="3">

@@ -19,7 +19,7 @@ const login = (): void => {
         .post('/api/user/login', user)
         .then((response) => {
             cookies.set('token', response.data.token)
-            router.push('/')
+            router.push('/list-post')
         })
         .catch((error) => console.error(error));
 };
