@@ -1,5 +1,13 @@
 <script setup lang="ts">
 import { UserIcon, MailIcon, ListCheckIcon } from 'vue-tabler-icons';
+import { useCookies } from 'vue3-cookies';
+
+const { cookies } = useCookies();
+
+const handleLogout = () :void => {
+    cookies.remove("token")
+}
+
 </script>
 
 <template>
@@ -15,7 +23,7 @@ import { UserIcon, MailIcon, ListCheckIcon } from 'vue-tabler-icons';
             </v-btn>
         </template>
         <v-sheet rounded="md" width="200" elevation="10" class="mt-2">
-            <v-list class="py-0" lines="one" density="compact">
+            <!-- <v-list class="py-0" lines="one" density="compact">
                 <v-list-item value="item1" active-color="primary" >
                     <template v-slot:prepend>
                         <UserIcon stroke-width="1.5" size="20"/>
@@ -34,9 +42,9 @@ import { UserIcon, MailIcon, ListCheckIcon } from 'vue-tabler-icons';
                     </template>
                     <v-list-item-title class="pl-4 text-body-1">My Task</v-list-item-title>
                 </v-list-item>
-            </v-list>
+            </v-list> -->
             <div class="pt-4 pb-4 px-5 text-center">
-                <v-btn to="/auth/login" color="primary" variant="outlined" block>Logout</v-btn>
+                <v-btn to="/login" color="primary" variant="outlined" block @click="handleLogout">Logout</v-btn>
             </div>
         </v-sheet>
     </v-menu>

@@ -63,6 +63,7 @@ const uploadImage = () => {
         .post('/api/upload', data)
         .then((response) => {
             toast('Tải ảnh lên thành công!');
+            files.value = []
             page.value = 1;
             fetchImage();
         })

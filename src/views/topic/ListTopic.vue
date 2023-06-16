@@ -143,8 +143,9 @@ const closeDialogImage = (type?: string) => {
                                 <v-table class="month-table table-contact">
                                     <thead>
                                         <tr>
-                                            <th class="text-subtitle-1 font-weight-bold" style="width: 30%">Stt</th>
-                                            <th class="text-subtitle-1 font-weight-bold" style="width: 50%">Tên chủ đề</th>
+                                            <th class="text-subtitle-1 font-weight-bold" style="width: 10%">Stt</th>
+                                            <th class="text-subtitle-1 font-weight-bold" style="width: 40%">Tên chủ đề</th>
+                                            <th class="text-subtitle-1 font-weight-bold" style="width: 30%">Ngày tạo</th>
                                             <th class="text-subtitle-1 font-weight-bold" style="width: 20%"></th>
                                         </tr>
                                     </thead>
@@ -155,6 +156,9 @@ const closeDialogImage = (type?: string) => {
                                             </td>
                                             <td>
                                                 <p class="text-body-1 text-muted">{{ item.name }}</p>
+                                            </td>
+                                            <td>
+                                                <p class="text-body-1 text-muted">{{ new Date(item.created_time).toLocaleString() }}</p>
                                             </td>
                                             <td>
                                                 <div style="display: flex">

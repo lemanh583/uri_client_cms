@@ -156,6 +156,7 @@ const openDialog = (id: string) => {
                                             <th class="text-subtitle-1 font-weight-bold">Email</th>
                                             <th class="text-subtitle-1 font-weight-bold">Số điện thoại</th>
                                             <th class="text-subtitle-1 font-weight-bold">Tình trạng</th>
+                                            <th class="text-subtitle-1 font-weight-bold">Ngày gửi</th>
                                             <th class="text-subtitle-1 font-weight-bold"></th>
                                         </tr>
                                     </thead>
@@ -176,6 +177,9 @@ const openDialog = (id: string) => {
                                             <td>
                                                 <p v-if="item.active" class="text-body-1 text-muted" style="color: green !important;">Đã liên hệ</p>
                                                 <p v-else class="text-body-1 text-muted" style="color: red !important;"> Chưa liên hệ </p>
+                                            </td>
+                                            <td>
+                                                <p class="text-body-1 text-muted">{{ new Date(item.created_time).toLocaleString() }}</p>
                                             </td>
                                             <td>
                                                 <div style="display: flex">

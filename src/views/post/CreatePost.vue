@@ -263,7 +263,7 @@ const checkList = (data: any) => {
 </style>
 
 <style>
-.ck-editor__editable {
+.ck.ck-content.ck-editor__editable {
     min-height: 500px;
     max-height: 500px;
 }
